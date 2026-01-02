@@ -1,0 +1,13 @@
+Best model (by Test AUC, then Brier, then LogLoss): XGB
+
+     Test
+      XGB
+ 0.804723
+ 0.574074
+ 0.859551
+ 0.712644
+ 0.768844
+ 0.751748
+ 0.635897
+ 0.169664
+ 0.542825

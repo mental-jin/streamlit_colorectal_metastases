@@ -1,0 +1,12 @@
+This project loads scikit-learn/joblib artifacts from ml_results/*/artifacts.
+
+To avoid Streamlit Cloud unpickling errors (e.g. missing internal sklearn classes like _RemainderColsList), keep these versions aligned with the environment that created the artifacts.
+
+Local (artifact-producing) environment versions:
+- scikit-learn==1.5.1
+- joblib==1.4.2
+- numpy==1.26.4
+- scipy==1.13.1
+- pandas==2.3.2
+- openpyxl==3.1.5
+- xgboost==3.1.2
