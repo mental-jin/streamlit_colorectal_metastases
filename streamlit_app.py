@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import __main__
 import json
+import re
 import tempfile
 from html import escape
 from io import BytesIO
@@ -14,6 +15,183 @@ import pandas as pd
 import streamlit as st
 
 import predict_one as po
+
+
+def _col_key(name: str) -> str:
+    """Normalize a column name for lookup.
+
+    Examples:
+    - "Carcinoma nodule" -> "carcinoma_nodule"
+    - "MSI-H" -> "msi_h"
+    """
+
+    return re.sub(r"[^a-z0-9]+", "_", str(name).strip().lower()).strip("_")
+
+
+def _pretty_var_name(name: str) -> str:
+    """Pretty display name: underscores -> spaces, remove trailing brackets/parentheses content."""
+
+    s = str(name).replace("_", " ")
+    # Remove any trailing type hints like "（categorical）"/"（numerical）" or "(xxx)".
+    s = re.sub(r"\s*[（(].*?[）)]\s*$", "", s)
+    return s
+
+
+# Categorical value -> English label mapping (display only; raw value is preserved).
+_CAT_VALUE_LABELS: dict[str, dict[str, str]] = {
+    _col_key("Carcinoma_nodule"): {
+        "0": "None detected",
+        "1": "1–3 carcinoma nodules (mild)",
+        "2": "≥4 carcinoma nodules (severe)",
+    },
+    _col_key("Differentiation_grade"): {
+        "1": "Well differentiated",
+        "2": "Well-to-moderately differentiated",
+        "3": "Moderately differentiated",
+        "4": "Moderately-to-poorly differentiated",
+        "5": "Poorly differentiated",
+        "6": "Poorly/undifferentiated",
+    },
+    _col_key("Vascular_invasion"): {"1": "Present", "0": "Absent"},
+    _col_key("Perineural_invasion"): {"1": "Present", "0": "Absent"},
+    _col_key("MLH1"): {"1": "Positive", "0": "Negative"},
+    _col_key("MSH2"): {"1": "Positive", "0": "Negative"},
+    _col_key("MSH6"): {"1": "Positive", "0": "Negative"},
+    _col_key("PMS2"): {"1": "Positive", "0": "Negative"},
+    _col_key("Family_history"): {"1": "Yes", "0": "No"},
+    _col_key("Colonic_obstruction"): {"1": "Yes", "0": "No"},
+    _col_key("Hypertension"): {"1": "Yes", "0": "No"},
+    _col_key("Diabetes"): {"1": "Yes", "0": "No"},
+    _col_key("Coronary_artery_disease"): {"1": "Yes", "0": "No"},
+    _col_key("Hyperlipidemia"): {"1": "Yes", "0": "No"},
+    _col_key("BRAF_mutant"): {"1": "是", "0": "否"},
+    _col_key("KRAS_mutant"): {"1": "是", "0": "否"},
+    _col_key("NRAS_mutant"): {"1": "是", "0": "否"},
+    _col_key("MSI-H"): {"1": "Yes", "0": "No"},
+}
+
+
+def _cat_format_func(col_name: str):
+    mapping = _CAT_VALUE_LABELS.get(_col_key(col_name), {})
+
+    def _fmt(x: Any) -> str:
+        sx = str(x)
+        return mapping.get(sx, sx)
+
+    return _fmt
+
+
+# Units for numerical (continuous) variables (display only).
+_NUM_UNITS: dict[str, str] = {
+    _col_key("IgA"): "g/L",
+    _col_key("IgG"): "g/L",
+    _col_key("IgM"): "g/L",
+    _col_key("IgE"): "kU/L",
+    _col_key("Albumin"): "g/L",
+    _col_key("ALP"): "U/L",
+    _col_key("ALT"): "U/L",
+    _col_key("AST"): "U/L",
+    _col_key("Direct_bilirubin"): "μmol/L",
+    _col_key("Glucose"): "mmol/L",
+    _col_key("Potassium"): "mmol/L",
+    _col_key("LDH"): "U/L",
+    _col_key("Prealbumin"): "mg/L",
+    _col_key("RBP"): "mg/L",
+    _col_key("Total_bile_acids"): "μmol/L",
+    _col_key("Total_bilirubin"): "μmol/L",
+    _col_key("Triglycerides"): "mmol/L",
+    _col_key("Total_protein"): "g/L",
+    _col_key("mAST"): "U/L",
+    _col_key("GLDH"): "U/L",
+    _col_key("A_G_ratio"): "%",
+    _col_key("Globulin"): "%",
+    _col_key("Total_cholesterol"): "%",
+    _col_key("Ast_alt_ratio"): "%",
+    _col_key("Indirect_bilirubin"): "μmol/L",
+    _col_key("EGFR"): "mL/min/1.73m²",
+    _col_key("IL10"): "pg/mL",
+    _col_key("IL4"): "pg/mL",
+    _col_key("IL5"): "pg/mL",
+    _col_key("IL8"): "pg/mL",
+    _col_key("IL12_p70"): "pg/mL",
+    _col_key("IFN_gamma"): "pg/mL",
+    _col_key("IFN_alpha"): "pg/mL",
+    _col_key("IL1_beta"): "pg/mL",
+    _col_key("IL6"): "pg/mL",
+    _col_key("IL17"): "pg/mL",
+    _col_key("TNF_alpha"): "pg/mL",
+    _col_key("IL2"): "pg/mL",
+    _col_key("Total_T_lymphocytes"): "%",
+    _col_key("CD4_T_cells"): "%",
+    _col_key("CD8_T_cells"): "%",
+    _col_key("Total_B_lymphocytes"): "%",
+    _col_key("NK_cells"): "%",
+    _col_key("CD29_pos_helper_T_cells"): "%",
+    _col_key("Early_activated_T_cells"): "%",
+    _col_key("Regulatory_T_cells"): "%",
+    _col_key("CD8_CD28_pos"): "%",
+    _col_key("CD8_CD25_over_CD8_percent"): "%",
+    _col_key("CD4_CD25_over_CD4_percent"): "%",
+    _col_key("CD4_count"): "个/ul",
+    _col_key("CD8_count"): "个/ul",
+    _col_key("CD19_count"): "个/ul",
+    _col_key("NK_count"): "个/ul",
+    _col_key("CD3_count"): "个/ul",
+    _col_key("CD4_CD45RO_memory_percent_of_helper_T"): "%",
+    _col_key("CD8_CD45RO_memory_percent_of_cytotoxic_T"): "%",
+    _col_key("CD4_CD45RA_naive_percent_of_helper_T"): "%",
+    _col_key("CD8_CD45RA_naive_percent_of_cytotoxic_T"): "%",
+    _col_key("CD3_HLA_DR_pos"): "%",
+    _col_key("VitA"): "μmol/L",
+    _col_key("VitB1"): "μg/L",
+    _col_key("VitB2"): "μg/L",
+    _col_key("VitB6"): "μg/L",
+    _col_key("VitC"): "μmol/L",
+    _col_key("VitE"): "μmol/L",
+    _col_key("SCCA"): "U/mL",
+    _col_key("CA724"): "U/mL",
+    _col_key("NSE"): "U/mL",
+    _col_key("CYFRA21_1"): "U/mL",
+    _col_key("CA242"): "U/mL",
+    _col_key("CA50"): "U/mL",
+    _col_key("CA199"): "U/mL",
+    _col_key("CEA"): "U/mL",
+    _col_key("AFP"): "U/mL",
+    _col_key("CA153"): "U/mL",
+    _col_key("CA125"): "U/mL",
+    _col_key("WBC"): "10^9/L",
+    _col_key("RBC"): "10^12/L",
+    _col_key("Neutrophil_percent"): "%",
+    _col_key("Hemoglobin"): "g/L",
+    _col_key("Lymphocyte_percent"): "%",
+    _col_key("Hematocrit"): "%",
+    _col_key("Monocyte_percent"): "%",
+    _col_key("MCV"): "fL",
+    _col_key("MCH"): "pg",
+    _col_key("Neutrophil_absolute"): "10^9/L",
+    _col_key("RDW_CV"): "%",
+    _col_key("Lymphocyte_absolute"): "10^9/L",
+    _col_key("Platelet_count"): "10^9/L",
+    _col_key("Monocyte_absolute"): "10^9/L",
+    _col_key("MPV"): "fL",
+    _col_key("Plateletcrit"): "%",
+    _col_key("PDW"): "%",
+    _col_key("MCHC"): "g/L",
+    _col_key("CRP"): "mg/L",
+    _col_key("Iron"): "μmol/L",
+    _col_key("Reticulocyte_percent"): "%",
+    _col_key("Tumor volume"): "cm³",
+    _col_key("Tumor size"): "cm",
+    _col_key("Ki67"): "%",
+}
+
+
+def _display_label(col_name: str, *, is_categorical: bool) -> str:
+    pretty = _pretty_var_name(col_name)
+    if is_categorical:
+        return pretty
+    unit = _NUM_UNITS.get(_col_key(col_name))
+    return f"{pretty} ({unit})" if unit else pretty
 
 
 def _inject_custom_pickle_types() -> None:
@@ -242,10 +420,15 @@ with st.form("input_form"):
             if not opts:
                 # If encoder categories aren't available, fall back to a single safe option.
                 opts = [default_val] if default_val != "" else [""]
-            val = st.selectbox(f"{c}（categorical）", options=opts, index=opts.index(default_val) if default_val in opts else 0)
+            val = st.selectbox(
+                _display_label(c, is_categorical=True),
+                options=opts,
+                index=opts.index(default_val) if default_val in opts else 0,
+                format_func=_cat_format_func(c),
+            )
             user_values[c] = val
         else:
-            val = st.number_input(f"{c}（numerical）", value=float(defaults.get(c, 0.0)))
+            val = st.number_input(_display_label(c, is_categorical=False), value=float(defaults.get(c, 0.0)))
             user_values[c] = float(val)
 
     submit = st.form_submit_button("Predict")
