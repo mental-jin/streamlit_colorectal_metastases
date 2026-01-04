@@ -64,9 +64,9 @@ _CAT_VALUE_LABELS: dict[str, dict[str, str]] = {
     _col_key("Diabetes"): {"1": "Yes", "0": "No"},
     _col_key("Coronary_artery_disease"): {"1": "Yes", "0": "No"},
     _col_key("Hyperlipidemia"): {"1": "Yes", "0": "No"},
-    _col_key("BRAF_mutant"): {"1": "是", "0": "否"},
-    _col_key("KRAS_mutant"): {"1": "是", "0": "否"},
-    _col_key("NRAS_mutant"): {"1": "是", "0": "否"},
+    _col_key("BRAF_mutant"): {"1": "Yes", "0": "No"},
+    _col_key("KRAS_mutant"): {"1": "Yes", "0": "No"},
+    _col_key("NRAS_mutant"): {"1": "Yes", "0": "No"},
     _col_key("MSI-H"): {"1": "Yes", "0": "No"},
 }
 
