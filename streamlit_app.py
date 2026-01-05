@@ -389,17 +389,31 @@ try:
     pre, models = load_artifacts(load_dir)
     _auto_export_categorical_levels(pre, output_path=Path(__file__).resolve().parent / "categorical_levels_from_encoder.csv")
     model_keys = sorted(models.keys())
+    
+    # Define the desired model order with SGBT as optimal
+    desired_order = ["SGBT", "RF", "SVM", "XGB", "LR", "DT", "NNET", "NB", "KNN"]
+    ordered_keys = [m for m in desired_order if m in model_keys]
+    # Add any remaining models not in desired_order
+    ordered_keys.extend([m for m in model_keys if m not in desired_order])
+    model_keys = ordered_keys
+    
+    # Create display labels with optimal model annotation
+    model_labels = [f"{m} (Optimal model)" if m == "SGBT" else m for m in model_keys]
+    
     exists = True
 except Exception as e:
     exists = False
     st.error(f"Failed to load artifacts: {e}")
     st.stop()
 
-model_key = st.selectbox("Select model", options=model_keys, index=model_keys.index("RF") if "RF" in model_keys else 0)
+model_key = st.selectbox("Select model", options=model_labels, index=0)
+
+# Extract actual model key from label (remove " (Optimal model)" suffix if present)
+actual_model_key = model_key.replace(" (Optimal model)", "")
 
 threshold = 0.5
 
-model = models[model_key]
+model = models[actual_model_key]
 
 defaults = _load_defaults_from_text(base_dir=Path(__file__).resolve().parent)
 num_cols, cat_cols = _get_transformer_columns(pre)
