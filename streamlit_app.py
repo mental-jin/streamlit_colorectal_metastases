@@ -16,6 +16,7 @@ import streamlit as st
 
 import predict_one as po
 
+MODEL_PATH = "run_20260105_104850"
 
 def _col_key(name: str) -> str:
     """Normalize a column name for lookup.
@@ -383,7 +384,7 @@ st.set_page_config(page_title="Metastasis Predictor", layout="centered")
 
 st.title("Predicting the occurrence of metastases after colorectal cancer surgery")
 
-load_dir = str(Path("ml_results") / "smoke_run_jlx")
+load_dir = str(Path("ml_results") / MODEL_PATH)
 
 try:
     pre, models = load_artifacts(load_dir)

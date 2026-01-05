@@ -1,0 +1,37 @@
+﻿feature,importance,abs_importance
+cat__MSI-H_1,0.0,0.0
+cat__Hyperlipidemia_0,0.0,0.0
+cat__Diabetes_1,0.0,0.0
+cat__Diabetes_0,0.0,0.0
+cat__MSH6_1,0.0,0.0
+cat__MSH6_0,0.0,0.0
+cat__MLH1_1,0.0,0.0
+cat__MLH1_0,0.0,0.0
+cat__Sex_Female,0.0,0.0
+num__NRAS mutant,0.0,0.0
+num__KRAS mutant,0.0,0.0
+num__BRAF mutant,0.0,0.0
+num__Carcinoma nodule,0.0,0.0
+num__Vascular invasion,0.0,0.0
+num__Differentiation grade,0.0,0.0
+num__T stage,0.0,0.0
+num__IFN alpha,0.0,0.0
+num__IL12 p70,0.0,0.0
+num__Ki67,0.0,0.0
+num__BMI,0.0,0.0
+num__Reticulocyte%,0.0,0.0
+num__CRP,0.0,0.0
+num__Monocyte absolute,0.0,0.0
+num__Platelet count,0.0,0.0
+num__MCV,0.0,0.0
+num__Monocyte%,0.0,0.0
+num__Hemoglobin,0.0,0.0
+num__Neutrophil%,0.0,0.0
+num__CA153,0.0,0.0
+num__CEA,0.0,0.0
+num__CA199,0.0,0.0
+num__CA50,0.0,0.0
+num__CA242,0.0,0.0
+num__VitE,0.0,0.0
+num__VitB6,0.0,0.0
+num__VitB1,0.0,0.0

@@ -1,0 +1,50 @@
+﻿feature,importance,abs_importance
+num__IL2,0.0033449951928213096,0.0033449951928213096
+num__MCH,0.0017786561264822587,0.0017786561264822587
+num__Signet-ring cell carcinoma,0.0015603300929387775,0.0015603300929387775
+num__CD8+ naive T cell%,0.0010355464159812588,0.0010355464159812588
+num__VitB6,0.0008325766477941254,0.0008325766477941254
+num__Early activated T cells,0.0007845048605918503,0.0007845048605918503
+num__CA153,0.0003304935370153195,0.0003304935370153195
+num__BRAF mutant,0.00011617348573873531,0.00011617348573873531
+num__Hemoglobin,-2.8709539579041542e-05,2.8709539579041542e-05
+num__Vascular invasion,1.6691592778583787e-05,1.6691592778583787e-05
+cat__MSI-H_1,0.0,0.0
+cat__Hyperlipidemia_1,0.0,0.0
+cat__Diabetes_1,0.0,0.0
+cat__MSH6_0,0.0,0.0
+cat__MSH2_1,0.0,0.0
+cat__Hypertension_1,0.0,0.0
+cat__Hypertension_0,0.0,0.0
+num__Family history,0.0,0.0
+num__Colonic obstruction,0.0,0.0
+num__Coronary artery disease,0.0,0.0
+num__KRAS mutant,0.0,0.0
+cat__Sex_Male,0.0,0.0
+cat__Sex_Female,0.0,0.0
+cat__MSH2_0,0.0,0.0
+cat__MLH1_0,0.0,0.0
+num__PDW,0.0,0.0
+num__MCV,0.0,0.0
+num__Perineural invasion,0.0,0.0
+num__Carcinoma nodule,0.0,0.0
+num__TNF alpha,0.0,0.0
+num__BMI,0.0,0.0
+num__Age,0.0,0.0
+num__T stage,0.0,0.0
+num__SCCA,0.0,0.0
+num__CEA,0.0,0.0
+num__AFP,0.0,0.0
+num__CA125,0.0,0.0
+num__Monocyte%,0.0,0.0
+num__Hematocrit,0.0,0.0
+num__VitB2,0.0,0.0
+num__VitE,0.0,0.0
+num__Treg cells%,0.0,0.0
+num__CD3 count,0.0,0.0
+num__CD4+ memory T cell%,0.0,0.0
+num__CD4+ naive T cell%,0.0,0.0
+num__Triglycerides,0.0,0.0
+num__EGFR,0.0,0.0
+num__A G ratio,0.0,0.0
+num__Total T lymphocytes,0.0,0.0
