@@ -3,6 +3,7 @@ from __future__ import annotations
 import __main__
 import json
 import re
+import sys
 import tempfile
 from html import escape
 from io import BytesIO
@@ -15,6 +16,17 @@ import pandas as pd
 import streamlit as st
 
 import predict_one as po
+
+# Reuse the workspace-wide display standard (units, categorical labels, num_/cat_ stripping).
+_LAB_REPORT_ROOT = Path(__file__).resolve().parents[1]
+if str(_LAB_REPORT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_LAB_REPORT_ROOT))
+
+try:
+    from display_names import display_name as _std_display_name
+except Exception:
+    def _std_display_name(name: str | None, *, mode: str = "html") -> str | None:  # type: ignore
+        return None if name is None else str(name)
 
 MODEL_PATH = "run_20260105_104850"
 
@@ -68,7 +80,7 @@ _CAT_VALUE_LABELS: dict[str, dict[str, str]] = {
     _col_key("BRAF_mutant"): {"1": "Yes", "0": "No"},
     _col_key("KRAS_mutant"): {"1": "Yes", "0": "No"},
     _col_key("NRAS_mutant"): {"1": "Yes", "0": "No"},
-    _col_key("MSI-H"): {"1": "Yes", "0": "No"},
+    _col_key("MSI-H"): {"1": "MSI-H", "0": "MSS"},
 }
 
 
@@ -188,11 +200,18 @@ _NUM_UNITS: dict[str, str] = {
 
 
 def _display_label(col_name: str, *, is_categorical: bool) -> str:
-    pretty = _pretty_var_name(col_name)
+    # 先按统一标准清洗（去掉 num_/cat_ 前缀、下划线转空格、应用单位/覆盖映射）。
+    base = _std_display_name(col_name, mode="html") or _pretty_var_name(col_name)
+
     if is_categorical:
-        return pretty
+        return base
+
+    # 如果统一标准已带单位（形如 xxx(umol/L) 或 xxx (umol/L)），则不重复追加。
+    if re.search(r"\([^\)]*\)\s*$", str(base)):
+        return str(base)
+
     unit = _NUM_UNITS.get(_col_key(col_name))
-    return f"{pretty} ({unit})" if unit else pretty
+    return f"{base} ({unit})" if unit else str(base)
 
 
 def _inject_custom_pickle_types() -> None:
