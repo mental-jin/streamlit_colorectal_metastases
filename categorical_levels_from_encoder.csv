@@ -1,10 +1,18 @@
 ﻿column,n_categories,categories
-Diabetes,2,0|1
-Hyperlipidemia,2,0|1
-Hypertension,2,0|1
+Carcinoma nodule,3,0|1|2
+Differentiation grade,3,G1|G2|G3
+N stage,3,0|1|2
+mGPS,3,0|1|2
+BRAF mutant,2,0|1
+Colonic obstruction,2,0|1
+Family history,2,0|1
+KRAS mutant,2,0|1
 MLH1,2,0|1
 MSH2,2,0|1
 MSH6,2,0|1
 MSI-H,2,0|1
+NRAS mutant,2,0|1
 PMS2,2,0|1
-Sex,2,Female|Male
+Perineural invasion,2,0|1
+T stage,2,T1-T2|T3-T4
+Vascular invasion,2,0|1

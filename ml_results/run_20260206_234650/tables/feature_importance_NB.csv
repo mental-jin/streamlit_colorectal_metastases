@@ -1,0 +1,31 @@
+﻿feature_idx,feature_display,feature,importance,abs_importance
+48,NLR,num__NLR,0.0036090260402188213,0.0036090260402188213
+43,Tumor size(cm),num__Tumor size,0.0019349457881569277,0.0019349457881569277
+57,N stage(N2),cat__N stage_2,0.0018608099342045325,0.0018608099342045325
+46,PLN,num__PLN,0.0017509962005376133,0.0017509962005376133
+33,CEA(ng/ml),num__CEA,0.0011940505977204308,0.0011940505977204308
+23,CD4+ count(cells/ul),num__CD4+ count,0.0009744231303865702,0.0009744231303865702
+78,Colonic obstruction(No),cat__Colonic obstruction_0,0.0007232879251229285,0.0007232879251229285
+21,NK cells %,num__NK cells %,0.0006264479658976141,0.0006264479658976141
+1,LDH(U/L),num__LDH,0.00033453804096023054,0.00033453804096023054
+45,TNLE,num__TNLE,0.0,0.0
+22,Treg cells %,num__Treg cells %,0.0,0.0
+65,Carcinoma nodule(None),cat__Carcinoma nodule_0,0.0,0.0
+72,PMS2(-),cat__PMS2_0,0.0,0.0
+60,Differentiation grade(G3),cat__Differentiation grade_G3,0.0,0.0
+47,Ki67(%),num__Ki67,0.0,0.0
+53,T stage(T1-T2),cat__T stage_T1-T2,0.0,0.0
+7,IL8(pg/mL),num__IL8,0.0,0.0
+82,KRAS mutant(No),cat__KRAS mutant_0,0.0,0.0
+63,Perineural invasion(No),cat__Perineural invasion_0,0.0,0.0
+61,Vascular invasion(No),cat__Vascular invasion_0,0.0,0.0
+31,CA242(U/mL),num__CA242,0.0,0.0
+81,BRAF mutant(Yes),cat__BRAF mutant_1,0.0,0.0
+27,CD3+ count(cells/ul),num__CD3+ count,0.0,0.0
+32,CA199(U/mL),num__CA199,0.0,0.0
+89,mGPS: 1,cat__mGPS_1,0.0,0.0
+20,CD19+ B cells %,num__CD19+ B cells %,0.0,0.0
+25,CD19+ count(cells/ul),num__CD19+ count,0.0,0.0
+77,Family history(Yes),cat__Family history_1,0.0,0.0
+74,MSH6(-),cat__MSH6_0,0.0,0.0
+3,Total protein(g/L),num__Total protein,0.0,0.0

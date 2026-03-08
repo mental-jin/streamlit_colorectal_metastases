@@ -16,7 +16,7 @@ import streamlit as st
 
 import predict_one as po
 
-MODEL_PATH = "run_20260105_104850"
+MODEL_PATH = "run_20260206_234650"
 
 def _col_key(name: str) -> str:
     """Normalize a column name for lookup.
@@ -84,32 +84,15 @@ def _cat_format_func(col_name: str):
 
 # Units for numerical (continuous) variables (display only).
 _NUM_UNITS: dict[str, str] = {
-    _col_key("IgA"): "g/L",
-    _col_key("IgG"): "g/L",
-    _col_key("IgM"): "g/L",
-    _col_key("IgE"): "kU/L",
+
     _col_key("Albumin"): "g/L",
     _col_key("ALP"): "U/L",
-    _col_key("ALT"): "U/L",
-    _col_key("AST"): "U/L",
-    _col_key("Direct_bilirubin"): "μmol/L",
-    _col_key("Glucose"): "mmol/L",
-    _col_key("Potassium"): "mmol/L",
+   
     _col_key("LDH"): "U/L",
     _col_key("Prealbumin"): "mg/L",
-    _col_key("RBP"): "mg/L",
-    _col_key("Total_bile_acids"): "μmol/L",
-    _col_key("Total_bilirubin"): "μmol/L",
-    _col_key("Triglycerides"): "mmol/L",
-    _col_key("Total_protein"): "g/L",
-    _col_key("mAST"): "U/L",
-    _col_key("GLDH"): "U/L",
-    _col_key("A_G_ratio"): "%",
-    _col_key("Globulin"): "%",
-    _col_key("Total_cholesterol"): "%",
-    _col_key("Ast_alt_ratio"): "%",
-    _col_key("Indirect_bilirubin"): "μmol/L",
-    _col_key("EGFR"): "mL/min/1.73m²",
+ 
+       _col_key("Total_protein"): "g/L",
+    
     _col_key("IL10"): "pg/mL",
     _col_key("IL4"): "pg/mL",
     _col_key("IL5"): "pg/mL",
@@ -126,18 +109,18 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("CD4_T_cells"): "%",
     _col_key("CD8_T_cells"): "%",
     _col_key("Total_B_lymphocytes"): "%",
-    _col_key("NK_cells"): "%",
+
     _col_key("CD29_pos_helper_T_cells"): "%",
     _col_key("Early_activated_T_cells"): "%",
     _col_key("Regulatory_T_cells"): "%",
     _col_key("CD8_CD28_pos"): "%",
     _col_key("CD8_CD25_over_CD8_percent"): "%",
     _col_key("CD4_CD25_over_CD4_percent"): "%",
-    _col_key("CD4_count"): "个/ul",
-    _col_key("CD8_count"): "个/ul",
-    _col_key("CD19_count"): "个/ul",
-    _col_key("NK_count"): "个/ul",
-    _col_key("CD3_count"): "个/ul",
+    _col_key("CD4_count"): "cells/ul",
+    _col_key("CD8_count"): "cells/ul",
+    _col_key("CD19_count"): "cells/ul",
+    _col_key("NK_count"): "cells/ul",
+    _col_key("CD3_count"): "cells/ul",
     _col_key("CD4_CD45RO_memory_percent_of_helper_T"): "%",
     _col_key("CD8_CD45RO_memory_percent_of_cytotoxic_T"): "%",
     _col_key("CD4_CD45RA_naive_percent_of_helper_T"): "%",
@@ -184,7 +167,53 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("Tumor volume"): "cm³",
     _col_key("Tumor size"): "cm",
     _col_key("Ki67"): "%",
+    _col_key("PLN"): "Positive Lymph Nodes",
+    _col_key("TNLE"): "Total Number of Lymph Nodes Examined",
 }
+
+
+# Desired column display order (raw column names as stored in preprocessor).
+_DESIRED_COL_ORDER: list[str] = [
+    "Treg cells %",
+    "CEA",
+    "CD4+ count",
+    "CD3+ count",
+    "CA242",
+    "LDH",
+    "Total protein",
+    "CD19+ count",
+    "PLN",
+    "CA199",
+    "CD19+ B cells %",
+    "NK cells %",
+    "NLR",
+    "TNLE",
+    "Tumor size",
+    "Ki67",
+    "IL8",
+    "Carcinoma nodule",
+    "N stage",
+    "Perineural invasion",
+    "Vascular invasion",
+    "T stage",
+    "KRAS mutant",
+    "mGPS",
+    "Colonic obstruction",
+    "Differentiation grade",
+    "PMS2",
+    "BRAF mutant",
+    "Family history",
+    "MSH6",
+]
+
+_DESIRED_COL_ORDER_MAP: dict[str, int] = {c: i for i, c in enumerate(_DESIRED_COL_ORDER)}
+
+
+def _apply_custom_order(cols: list[str]) -> list[str]:
+    """Sort cols by _DESIRED_COL_ORDER; unrecognised columns go to the end."""
+    known = sorted([c for c in cols if c in _DESIRED_COL_ORDER_MAP], key=lambda c: _DESIRED_COL_ORDER_MAP[c])
+    unknown = [c for c in cols if c not in _DESIRED_COL_ORDER_MAP]
+    return known + unknown
 
 
 def _display_label(col_name: str, *, is_categorical: bool) -> str:
@@ -391,15 +420,15 @@ try:
     _auto_export_categorical_levels(pre, output_path=Path(__file__).resolve().parent / "categorical_levels_from_encoder.csv")
     model_keys = sorted(models.keys())
     
-    # Define the desired model order with SGBT as optimal
-    desired_order = ["SGBT", "RF", "SVM", "XGB", "LR", "DT", "NNET", "NB", "KNN"]
+    # Define the desired model order with RF as optimal
+    desired_order = ["RF", "SGBT", "SVM", "XGB", "LR", "DT", "NNET", "NB", "KNN"]
     ordered_keys = [m for m in desired_order if m in model_keys]
     # Add any remaining models not in desired_order
     ordered_keys.extend([m for m in model_keys if m not in desired_order])
     model_keys = ordered_keys
     
     # Create display labels with optimal model annotation
-    model_labels = [f"{m} (Optimal model)" if m == "SGBT" else m for m in model_keys]
+    model_labels = [f"{m} (Optimal model)" if m == "RF" else m for m in model_keys]
     
     exists = True
 except Exception as e:
@@ -420,7 +449,7 @@ defaults = _load_defaults_from_text(base_dir=Path(__file__).resolve().parent)
 num_cols, cat_cols = _get_transformer_columns(pre)
 cat_options = _categorical_options(pre)
 
-required_cols = _required_raw_columns_for_model(pre, model)
+required_cols = _apply_custom_order(_required_raw_columns_for_model(pre, model))
 st.caption(f"The model will use some of the preprocessed features; the current inference requires input for {len(required_cols)} raw columns.")
 
 user_values: dict[str, Any] = {}
@@ -442,6 +471,14 @@ with st.form("input_form"):
                 format_func=_cat_format_func(c),
             )
             user_values[c] = val
+        elif c in ("PLN", "TNLE"):
+            val = st.number_input(
+                _display_label(c, is_categorical=False),
+                min_value=0,
+                step=1,
+                value=max(0, int(defaults.get(c, 0))),
+            )
+            user_values[c] = int(val)
         else:
             val = st.number_input(_display_label(c, is_categorical=False), value=float(defaults.get(c, 0.0)))
             user_values[c] = float(val)

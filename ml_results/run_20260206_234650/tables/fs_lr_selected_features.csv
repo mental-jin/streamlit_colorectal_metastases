@@ -1,0 +1,31 @@
+﻿feature_index,feature,feature_display,abs_coef,selected
+65,cat__Carcinoma nodule_0,Carcinoma nodule(None),0.3392798602581024,1
+57,cat__N stage_2,N stage(N2),0.2210017889738083,1
+60,cat__Differentiation grade_G3,Differentiation grade(G3),0.16967369616031647,1
+33,num__CEA,CEA(ng/ml),0.16722723841667175,1
+72,cat__PMS2_0,PMS2(-),0.15507787466049194,1
+22,num__Treg cells %,Treg cells %,0.1401740461587906,1
+45,num__TNLE,TNLE,0.12474208325147629,1
+23,num__CD4+ count,CD4+ count(cells/ul),0.1232987567782402,1
+7,num__IL8,IL8(pg/mL),0.11168694496154785,1
+61,cat__Vascular invasion_0,Vascular invasion(No),0.11105793714523315,1
+63,cat__Perineural invasion_0,Perineural invasion(No),0.10378581285476685,1
+82,cat__KRAS mutant_0,KRAS mutant(No),0.0973328948020935,1
+47,num__Ki67,Ki67(%),0.09115830808877945,1
+89,cat__mGPS_1,mGPS: 1,0.08676018565893173,1
+31,num__CA242,CA242(U/mL),0.08655022084712982,1
+20,num__CD19+ B cells %,CD19+ B cells %,0.07822020351886749,1
+53,cat__T stage_T1-T2,T stage(T1-T2),0.0778326615691185,1
+27,num__CD3+ count,CD3+ count(cells/ul),0.07571054995059967,1
+81,cat__BRAF mutant_1,BRAF mutant(Yes),0.06880535930395126,1
+32,num__CA199,CA199(U/mL),0.06796125322580338,1
+1,num__LDH,LDH(U/L),0.05491289123892784,1
+48,num__NLR,NLR,0.04948034882545471,1
+43,num__Tumor size,Tumor size(cm),0.04871244356036186,1
+78,cat__Colonic obstruction_0,Colonic obstruction(No),0.04607491195201874,1
+77,cat__Family history_1,Family history(Yes),0.031789492815732956,1
+74,cat__MSH6_0,MSH6(-),0.029352528974413872,1
+3,num__Total protein,Total protein(g/L),0.029147539287805557,1
+25,num__CD19+ count,CD19+ count(cells/ul),0.026225082576274872,1
+46,num__PLN,PLN,0.023921281099319458,1
+21,num__NK cells %,NK cells %,0.016968367621302605,1

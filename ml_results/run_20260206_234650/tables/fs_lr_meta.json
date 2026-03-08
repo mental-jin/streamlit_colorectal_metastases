@@ -1,0 +1,15 @@
+{
+  "fs_method": "elasticnet",
+  "best_params": {
+    "model__C": 0.05,
+    "model__l1_ratio": 0.5
+  },
+  "best_cv_auc": 0.797630206943184,
+  "coef_tol": 1e-06,
+  "stability": true,
+  "stability_splitter": "StratifiedShuffleSplit",
+  "stability_runs": 200,
+  "stability_fraction": 0.8,
+  "stability_threshold": 0.6,
+  "n_stable_features": 39
+}
