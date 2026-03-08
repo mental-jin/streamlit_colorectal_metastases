@@ -364,10 +364,34 @@ def _required_raw_columns_for_model(pre: Any, model: Any) -> list[str]:
 
 def _build_full_row_df(*, pre: Any, user_values: dict[str, Any], defaults: dict[str, Any]) -> pd.DataFrame:
     cols = [str(x) for x in getattr(pre, "feature_names_in_", [])]
+
+    # Build cat_col -> numpy scalar type from the FITTED OHE categories_.
+    # This is the most reliable coercion source: it reflects exactly what the
+    # encoder saw during training (int64, float64, or object/str).
+    cat_dtype_map: dict[str, Any] = {}
+    for _name, _trans, _cols in _iter_column_transformers(pre):
+        if _name == "cat" and isinstance(_cols, list):
+            enc = _find_step(_trans, "OneHotEncoder")
+            if enc is not None and hasattr(enc, "categories_"):
+                for _col, _cats in zip(_cols, enc.categories_):
+                    cat_dtype_map[str(_col)] = _cats.dtype.type
+            break
+
     row: dict[str, Any] = {}
     for c in cols:
         if c in user_values and user_values[c] is not None:
-            row[c] = user_values[c]
+            val = user_values[c]
+            # selectbox always yields strings; coerce to the OHE-trained dtype so
+            # that e.g. "2" (str) -> np.int64(2) when categories_ were integers.
+            if isinstance(val, str) and c in cat_dtype_map:
+                scalar_type = cat_dtype_map[c]
+                # object dtype means the OHE was trained on strings — keep as str.
+                if scalar_type is not np.object_:
+                    try:
+                        val = scalar_type(val)
+                    except (ValueError, TypeError):
+                        pass
+            row[c] = val
         else:
             row[c] = defaults.get(c, 0.0)
     return pd.DataFrame([row], columns=cols)
@@ -488,23 +512,15 @@ with st.form("input_form"):
 if submit:
     X_df = _build_full_row_df(pre=pre, user_values=user_values, defaults=defaults)
 
-    # Internal: generate an Excel file for predict_one.py to consume
-    excel_bytes = _df_to_excel_bytes(X_df)
-
-    # Run prediction via the same logic used in predict_one.py (reads from xlsx)
-    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
-        tmp.write(excel_bytes)
-        tmp_path = Path(tmp.name)
-
     try:
-        proba, pred = po.predict_one_row(
-            input_xlsx=tmp_path,
-            target_col="Metastasis",
-            row_index=0,
-            pre=pre,
-            model=model,
-            threshold=threshold,
-        )
+        # Predict directly from the DataFrame — no Excel round-trip.
+        # Writing to Excel and reading back can silently change column dtypes
+        # (e.g. int64 -> float64), which causes OHE to treat values as unknown
+        # and output all-zero encoded vectors, making categorical changes invisible.
+        X_row = po._safe_float32_matrix(pre.transform(X_df))
+        proba = float(model.predict_proba(X_row)[:, 1].ravel()[0])
+        pred = int(proba >= threshold)
+
         st.subheader("Prediction Results")
 
         desc = f"The probability of metastasis is {proba*100:.2f}%."
