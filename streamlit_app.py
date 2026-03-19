@@ -433,9 +433,9 @@ def _auto_export_categorical_levels(pre: Any, *, output_path: Path) -> None:
         return
 
 
-st.set_page_config(page_title="Metastasis Predictor", layout="centered")
+st.set_page_config(page_title="Predicting Metastasis After Curative Resection for Colorectal Cancer", layout="centered")
 
-st.title("Predicting the occurrence of metastases after colorectal cancer surgery")
+st.title("Predicting Metastasis After Curative Resection for Colorectal Cancer")
 
 load_dir = str(Path("ml_results") / MODEL_PATH)
 

@@ -1,6 +1,8 @@
-# 🎈 Colorectal Metastases
+# Predicting Metastasis After Curative Resection for Colorectal Cancer
 
 A Streamlit app.
+
+App URL: https://Predicting-Metastasis-After-Curative-Resection-for-Colorectal-Cancer.streamlit.app/
 
 ### How to run it on your own machine
 
