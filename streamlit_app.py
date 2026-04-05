@@ -105,27 +105,27 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("IL17"): "pg/mL",
     _col_key("TNF_alpha"): "pg/mL",
     _col_key("IL2"): "pg/mL",
-    _col_key("Total_T_lymphocytes"): "%",
-    _col_key("CD4_T_cells"): "%",
-    _col_key("CD8_T_cells"): "%",
-    _col_key("Total_B_lymphocytes"): "%",
+    _col_key("Total_T_lymphocytes"): "(%)",
+    _col_key("CD4_T_cells"): "(%)",
+    _col_key("CD8_T_cells"): "(%)",
+    _col_key("Total_B_lymphocytes"): "(%)",
 
-    _col_key("CD29_pos_helper_T_cells"): "%",
-    _col_key("Early_activated_T_cells"): "%",
-    _col_key("Regulatory_T_cells"): "%",
-    _col_key("CD8_CD28_pos"): "%",
-    _col_key("CD8_CD25_over_CD8_percent"): "%",
-    _col_key("CD4_CD25_over_CD4_percent"): "%",
-    _col_key("CD4_count"): "cells/ul",
-    _col_key("CD8_count"): "cells/ul",
-    _col_key("CD19_count"): "cells/ul",
-    _col_key("NK_count"): "cells/ul",
-    _col_key("CD3_count"): "cells/ul",
-    _col_key("CD4_CD45RO_memory_percent_of_helper_T"): "%",
-    _col_key("CD8_CD45RO_memory_percent_of_cytotoxic_T"): "%",
-    _col_key("CD4_CD45RA_naive_percent_of_helper_T"): "%",
-    _col_key("CD8_CD45RA_naive_percent_of_cytotoxic_T"): "%",
-    _col_key("CD3_HLA_DR_pos"): "%",
+    _col_key("CD29_pos_helper_T_cells"): "(%)",
+    _col_key("Early_activated_T_cells"): "(%)",
+    _col_key("Regulatory_T_cells"): "(%)",
+    _col_key("CD8_CD28_pos"): "(%)",
+    _col_key("CD8_CD25_over_CD8_percent"): "(%)",
+    _col_key("CD4_CD25_over_CD4_percent"): "(%)",
+    _col_key("CD4_count"): "cells/uL",
+    _col_key("CD8_count"): "cells/uL",
+    _col_key("CD19_count"): "cells/uL",
+    _col_key("NK_count"): "cells/uL",
+    _col_key("CD3_count"): "cells/uL",
+    _col_key("CD4_CD45RO_memory_percent_of_helper_T"): "(%)",
+    _col_key("CD8_CD45RO_memory_percent_of_cytotoxic_T"): "(%)",
+    _col_key("CD4_CD45RA_naive_percent_of_helper_T"): "(%)",
+    _col_key("CD8_CD45RA_naive_percent_of_cytotoxic_T"): "(%)",
+    _col_key("CD3_HLA_DR_pos"): "(%)",
     _col_key("VitA"): "μmol/L",
     _col_key("VitB1"): "μg/L",
     _col_key("VitB2"): "μg/L",
@@ -145,29 +145,29 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("CA125"): "U/mL",
     _col_key("WBC"): "10^9/L",
     _col_key("RBC"): "10^12/L",
-    _col_key("Neutrophil_percent"): "%",
+    _col_key("Neutrophil_percent"): "(%)",
     _col_key("Hemoglobin"): "g/L",
-    _col_key("Lymphocyte_percent"): "%",
-    _col_key("Hematocrit"): "%",
-    _col_key("Monocyte_percent"): "%",
+    _col_key("Lymphocyte_percent"): "(%)",
+    _col_key("Hematocrit"): "(%)",
+    _col_key("Monocyte_percent"): "(%)",
     _col_key("MCV"): "fL",
     _col_key("MCH"): "pg",
     _col_key("Neutrophil_absolute"): "10^9/L",
-    _col_key("RDW_CV"): "%",
+    _col_key("RDW_CV"): "(%)",
     _col_key("Lymphocyte_absolute"): "10^9/L",
     _col_key("Platelet_count"): "10^9/L",
     _col_key("Monocyte_absolute"): "10^9/L",
     _col_key("MPV"): "fL",
-    _col_key("Plateletcrit"): "%",
-    _col_key("PDW"): "%",
+    _col_key("Plateletcrit"): "(%)",
+    _col_key("PDW"): "(%)",
     _col_key("MCHC"): "g/L",
     _col_key("CRP"): "mg/L",
     _col_key("Iron"): "μmol/L",
-    _col_key("Reticulocyte_percent"): "%",
+    _col_key("Reticulocyte_percent"): "(%)",
     _col_key("Tumor volume"): "cm³",
     _col_key("Tumor size"): "cm",
     _col_key("Ki67"): "%",
-    _col_key("PLN"): "Positive Lymph Nodes",
+    _col_key("PLN"): "Positive Lymph Node Counts",
     _col_key("TNLE"): "Total Number of Lymph Nodes Examined",
 }
 
@@ -209,6 +209,14 @@ _DESIRED_COL_ORDER: list[str] = [
 _DESIRED_COL_ORDER_MAP: dict[str, int] = {c: i for i, c in enumerate(_DESIRED_COL_ORDER)}
 
 
+# Display-name overrides for specific raw columns (UI only).
+_DISPLAY_LABEL_OVERRIDES: dict[str, str] = {
+    "Treg cells %": "Treg cells (%)",
+    "CD19+ B cells %": "CD19+ B cells (%)",
+    "NK cells %": "NK cells (%)",
+}
+
+
 def _apply_custom_order(cols: list[str]) -> list[str]:
     """Sort cols by _DESIRED_COL_ORDER; unrecognised columns go to the end."""
     known = sorted([c for c in cols if c in _DESIRED_COL_ORDER_MAP], key=lambda c: _DESIRED_COL_ORDER_MAP[c])
@@ -217,6 +225,9 @@ def _apply_custom_order(cols: list[str]) -> list[str]:
 
 
 def _display_label(col_name: str, *, is_categorical: bool) -> str:
+    if col_name in _DISPLAY_LABEL_OVERRIDES:
+        return _DISPLAY_LABEL_OVERRIDES[col_name]
+
     pretty = _pretty_var_name(col_name)
     if is_categorical:
         return pretty
