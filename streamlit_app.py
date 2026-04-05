@@ -116,11 +116,11 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("CD8_CD28_pos"): "(%)",
     _col_key("CD8_CD25_over_CD8_percent"): "(%)",
     _col_key("CD4_CD25_over_CD4_percent"): "(%)",
-    _col_key("CD4_count"): "cells/uL",
-    _col_key("CD8_count"): "cells/uL",
-    _col_key("CD19_count"): "cells/uL",
-    _col_key("NK_count"): "cells/uL",
-    _col_key("CD3_count"): "cells/uL",
+    _col_key("CD4_count"): "cells/μL",
+    _col_key("CD8_count"): "cells/μL",
+    _col_key("CD19_count"): "cells/μL",
+    _col_key("NK_count"): "cells/μL",
+    _col_key("CD3_count"): "cells/μL",
     _col_key("CD4_CD45RO_memory_percent_of_helper_T"): "(%)",
     _col_key("CD8_CD45RO_memory_percent_of_cytotoxic_T"): "(%)",
     _col_key("CD4_CD45RA_naive_percent_of_helper_T"): "(%)",
@@ -152,7 +152,7 @@ _NUM_UNITS: dict[str, str] = {
     _col_key("Monocyte_percent"): "(%)",
     _col_key("MCV"): "fL",
     _col_key("MCH"): "pg",
-    _col_key("Neutrophil_absolute"): "10^9/L",
+    _col_key("Neutrophil_absolute"): "10^9/μL",
     _col_key("RDW_CV"): "(%)",
     _col_key("Lymphocyte_absolute"): "10^9/L",
     _col_key("Platelet_count"): "10^9/L",
@@ -214,6 +214,7 @@ _DISPLAY_LABEL_OVERRIDES: dict[str, str] = {
     "Treg cells %": "Treg cells (%)",
     "CD19+ B cells %": "CD19+ B cells (%)",
     "NK cells %": "NK cells (%)",
+    "CA199": "CA19-9",
 }
 
 
