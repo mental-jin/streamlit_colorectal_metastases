@@ -215,7 +215,7 @@ _DISPLAY_LABEL_OVERRIDES: dict[str, str] = {
     "CD19+ B cells %": "CD19+ B cells (%)",
     "NK cells %": "NK cells (%)",
     "CA199": "CA19-9",
-    "Ki67": "Ki-67",
+    "Ki67": "Ki-67 (%)",
 
 }
 
